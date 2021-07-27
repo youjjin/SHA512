@@ -1,0 +1,38 @@
+
+#define _CRT_SECURE_NO_WARNINGS
+#include "sha512.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
+#include <assert.h>
+
+unsigned int cpucycles(void) { return __rdtsc(); }
+
+int main(void)
+{
+	unsigned int uPlainTextLen = 8;
+	unsigned char pszMessage[1] = { 0x04 };
+	unsigned char pszDigest[64] = { 0xb5, 0xb8, 0xc7, 0x25, 0x50, 0x7b, 0x5b, 0x13, 0x15, 0x8e, 0x02, 0x0d, 0x96, 0xfe, 0x4c, 0xfb, 0xf6, 0xd7, 0x74, 0xe0, 0x91, 0x61, 0xe2, 0xb5, 0x99, 0xb8, 0xf3, 0x5a, 0xe3, 0x1f, 0x16, 0xe3, 0x95, 0x82, 0x5e, 0xde, 0xf8, 0xaa, 0x69, 0xad, 0x30, 0x4e, 0xf8, 0x0f, 0xed, 0x9b, 0xaa, 0x05, 0x80, 0xd2, 0x47, 0xcd, 0x84, 0xe5, 0x7a, 0x2a, 0xe2, 0x39, 0xae, 0xc9, 0x0d, 0x2d, 0x58, 0x69 };
+
+	int i;
+	unsigned long long cycles = 0, cycles1, cycles2;
+	unsigned int loop = 10000;
+
+	//for loop에 들어가는 것까지 안새주려고 시간을 포루프 안에서 돌려줄것이다.
+	for (i = 0; i < loop; i++)
+	{
+		cycles1 = cpucycles();
+		//SHA512(pszMessage, uPlainTextLen, pszDigest);//4422
+		SHA512_Enc_op(pszMessage, uPlainTextLen, pszDigest);//
+		cycles2 = cpucycles();
+		cycles += (cycles2 - cycles1);
+	}
+
+	printf("\n[loop = %d]cycles : %10lld\n", loop, cycles / loop);
+	cycles = 0;
+
+	//Short_Messages_Test();
+	//Long_Messages_Test();
+	//Pseudorandomly_Generated_Messages_Test();
+}
